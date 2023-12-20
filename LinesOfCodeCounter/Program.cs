@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.ComponentModel;
 
 namespace LinesOfCodeCounter
 {
@@ -14,8 +15,16 @@ namespace LinesOfCodeCounter
 
         static void Main(string[] args)
         {
-            string[] directories = getDirectories(@"C:\Users\jvand\OneDrive\Desktop");
+            string[] directories = getDirectories(@"C:\Users\jvand\AppData\Roaming\DBeaverData\workspace6\General");
+            string[] listOfFiles;
 
+            foreach (string directory in directories)
+            {
+                listOfFiles = getFiles(directory, ".sql");
+            }
+
+            Console.WriteLine("Done.");
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -27,10 +36,35 @@ namespace LinesOfCodeCounter
 
             string[] dirs = Directory.GetDirectories(topDirectory, "*", SearchOption.AllDirectories);
 
-            return dirs;
+            List<string> returnDirs = new List<string>();
+
+            returnDirs.Add(topDirectory);
+            returnDirs.AddRange(dirs);
+
+            string[] returnDirectoriesArray = returnDirs.ToArray();
+
+            return returnDirectoriesArray;
 
         }
 
+        static string[] getFiles (string targetDirectory, string targetExtension)
+        {
+            string[] fileEntries = Directory.GetFiles(targetDirectory);
+            string[] fileEntriesWithExtension = new string[fileEntries.Length];
+
+            foreach(string entry in fileEntries)
+            {
+                string extension = Path.GetExtension(entry);
+                if(extension == targetExtension)
+                {
+                    fileEntriesWithExtension.Append(entry);
+                }
+            }
+
+
+            return fileEntriesWithExtension;
+
+        }
         /// <summary>
         /// Returns the number of rows of code for a given filepath.
         /// </summary>
@@ -43,19 +77,6 @@ namespace LinesOfCodeCounter
             return row;
         }
 
-        /// <summary>
-        /// Checks whether the file has the desired extension.
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <param name="extension"></param>
-        /// <returns></returns>
-        private bool checkExtension(string filepath, string extension)
-        {
-            bool hasExtension = false;
-
-            return hasExtension;
-
-        }
 
         /// <summary>
         /// Saves the list of files to a csv.
