@@ -15,13 +15,23 @@ namespace LinesOfCodeCounter
 
         static void Main(string[] args)
         {
-            string[] directories = getDirectories(@"C:\Users\jvand\AppData\Roaming\DBeaverData\workspace6\General");
+            string[] directories = getDirectories(@"C:\Users\jvand\AppData\Roaming\DBeaverData\workspace6\General\scripts");
             string[] listOfFiles;
 
             foreach (string directory in directories)
             {
                 listOfFiles = getFiles(directory, ".sql");
+
+                foreach (string file in listOfFiles)
+                {
+                    string[] row = countRowsOfCode(file);
+                    Console.WriteLine("{0},{1}", row[0], row[1]);
+                }
             }
+
+
+
+
 
             Console.WriteLine("Done.");
             Console.ReadKey();
@@ -50,19 +60,18 @@ namespace LinesOfCodeCounter
         static string[] getFiles (string targetDirectory, string targetExtension)
         {
             string[] fileEntries = Directory.GetFiles(targetDirectory);
-            string[] fileEntriesWithExtension = new string[fileEntries.Length];
-
+            List<string> returnFiles = new List<string>();
+            
             foreach(string entry in fileEntries)
             {
                 string extension = Path.GetExtension(entry);
                 if(extension == targetExtension)
                 {
-                    fileEntriesWithExtension.Append(entry);
+                    returnFiles.Add(entry);
                 }
             }
 
-
-            return fileEntriesWithExtension;
+            return returnFiles.ToArray();
 
         }
         /// <summary>
@@ -70,9 +79,13 @@ namespace LinesOfCodeCounter
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        private string[] countRowsOfCode(string filepath)
+        static string[] countRowsOfCode(string filepath)
         {
             string[] row = new string[2];
+            int lineCount = File.ReadLines(filepath).Count();
+
+            row[0] = filepath;
+            row[1] = lineCount.ToString();
 
             return row;
         }
